@@ -1,9 +1,6 @@
 'use client';
 
 import { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 
 export default function OptionCalculator() {
   const [entryPrice, setEntryPrice] = useState(0);
