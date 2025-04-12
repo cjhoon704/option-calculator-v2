@@ -39,10 +39,6 @@ export default function OptionCalculator() {
     });
   };
 
-  const isTradable = () => {
-    return daysToExpiry > 3;
-  };
-
   return (
     <div className="min-h-screen bg-neutral-50 dark:bg-neutral-900 py-10 px-4 transition-colors">
       <div className="max-w-xl mx-auto">
@@ -51,56 +47,59 @@ export default function OptionCalculator() {
             <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-100 text-center">
               🎛️ 옵션 감성 계산기
             </h2>
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <Input
+              <input
                 type="number"
                 placeholder="진입가"
                 className="rounded-xl px-4 py-2 dark:bg-neutral-700 dark:text-white"
                 onChange={(e) => setEntryPrice(parseFloat(e.target.value))}
               />
-              <Input
+              <input
                 type="number"
                 placeholder="목표가"
                 className="rounded-xl px-4 py-2 dark:bg-neutral-700 dark:text-white"
                 onChange={(e) => setTargetPrice(parseFloat(e.target.value))}
               />
-              <Input
+              <input
                 type="number"
                 placeholder="행사가"
                 className="rounded-xl px-4 py-2 dark:bg-neutral-700 dark:text-white"
                 onChange={(e) => setStrikePrice(parseFloat(e.target.value))}
               />
-              <Input
+              <input
                 type="number"
                 placeholder="현재가"
                 className="rounded-xl px-4 py-2 dark:bg-neutral-700 dark:text-white"
                 onChange={(e) => setCurrentPrice(parseFloat(e.target.value))}
               />
-              <Input
+              <input
                 type="number"
                 placeholder="델타"
                 className="rounded-xl px-4 py-2 dark:bg-neutral-700 dark:text-white"
                 onChange={(e) => setDelta(parseFloat(e.target.value))}
               />
-              <Input
+              <input
                 type="number"
                 placeholder="감마"
                 className="rounded-xl px-4 py-2 dark:bg-neutral-700 dark:text-white"
                 onChange={(e) => setGamma(parseFloat(e.target.value))}
               />
-              <Input
+              <input
                 type="number"
                 placeholder="남은 만기일 (일)"
                 className="rounded-xl px-4 py-2 dark:bg-neutral-700 dark:text-white"
                 onChange={(e) => setDaysToExpiry(parseInt(e.target.value))}
               />
             </div>
+
             <div className="text-center">
-              <Button 
-                onClick={calculateReturn} 
-                className="rounded-full bg-black text-white hover:bg-gray-800 px-6 py-2 transition-all">
+              <button
+                onClick={calculateReturn}
+                className="rounded-full bg-black text-white hover:bg-gray-800 px-6 py-2 transition-all"
+              >
                 ✨ 수익률 계산하기
-              </Button>
+              </button>
             </div>
 
             {result && (
@@ -112,10 +111,10 @@ export default function OptionCalculator() {
             )}
 
             <div className="pt-2 text-center text-sm text-gray-500 dark:text-gray-400">
-              {isTradable() ? "✅ D-3 이상: 거래 가능" : "🚫 D-3 이하: 거래 주의"}
+              {daysToExpiry > 3 ? "✅ D-3 이상: 거래 가능" : "🚫 D-3 이하: 거래 주의"}
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     </div>
   );
