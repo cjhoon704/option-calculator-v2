@@ -1,12 +1,7 @@
 'use client';
 
-import { useState } from "react";
-
-type Result = {
-  roi: string;
-  distance: string;
-  successRate: number;
-};
+import { useState, useEffect } from "react";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 export default function OptionCalculator() {
   const [entryPrice, setEntryPrice] = useState(0);
@@ -16,7 +11,8 @@ export default function OptionCalculator() {
   const [delta, setDelta] = useState(0);
   const [gamma, setGamma] = useState(0);
   const [daysToExpiry, setDaysToExpiry] = useState(0);
-  const [result, setResult] = useState<Result | null>(null);
+  const [result, setResult] = useState(null);
+  const [chartData, setChartData] = useState([]);
 
   const calculateReturn = () => {
     if (entryPrice === 0) return;
@@ -39,82 +35,78 @@ export default function OptionCalculator() {
     });
   };
 
+  useEffect(() => {
+    if (entryPrice === 0) return;
+    const data = [];
+    for (let price = currentPrice - 10; price <= currentPrice + 10; price += 1) {
+      const roi = ((targetPrice - entryPrice) / entryPrice) * 100;
+      data.push({ price, roi: parseFloat(roi.toFixed(2)) });
+    }
+    setChartData(data);
+  }, [entryPrice, targetPrice, currentPrice]);
+
   const isTradable = () => daysToExpiry > 3;
 
   return (
-    <div className="min-h-screen bg-neutral-50 dark:bg-neutral-900 py-12 px-4">
-      <div className="max-w-md mx-auto space-y-8">
+    <div className="min-h-screen bg-gradient-to-br from-neutral-100 to-neutral-200 dark:from-neutral-900 dark:to-neutral-800 flex items-center justify-center px-4 py-12">
+      <div className="w-full max-w-md space-y-8">
         <div className="text-center">
-          <h1 className="text-3xl font-semibold text-neutral-800 dark:text-white">
-            옵션 감성 계산기
+          <h1 className="text-2xl font-semibold text-neutral-900 dark:text-white tracking-tight">
+            옵션 계산기
           </h1>
         </div>
 
         <div className="space-y-4">
-          <input
-            type="number"
-            placeholder="진입가"
-            className="w-full rounded-xl px-4 py-3 bg-white dark:bg-neutral-800 text-neutral-800 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black"
-            onChange={(e) => setEntryPrice(parseFloat(e.target.value))}
-          />
-          <input
-            type="number"
-            placeholder="목표가"
-            className="w-full rounded-xl px-4 py-3 bg-white dark:bg-neutral-800 text-neutral-800 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black"
-            onChange={(e) => setTargetPrice(parseFloat(e.target.value))}
-          />
-          <input
-            type="number"
-            placeholder="행사가"
-            className="w-full rounded-xl px-4 py-3 bg-white dark:bg-neutral-800 text-neutral-800 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black"
-            onChange={(e) => setStrikePrice(parseFloat(e.target.value))}
-          />
-          <input
-            type="number"
-            placeholder="현재가"
-            className="w-full rounded-xl px-4 py-3 bg-white dark:bg-neutral-800 text-neutral-800 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black"
-            onChange={(e) => setCurrentPrice(parseFloat(e.target.value))}
-          />
-          <input
-            type="number"
-            placeholder="델타"
-            className="w-full rounded-xl px-4 py-3 bg-white dark:bg-neutral-800 text-neutral-800 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black"
-            onChange={(e) => setDelta(parseFloat(e.target.value))}
-          />
-          <input
-            type="number"
-            placeholder="감마"
-            className="w-full rounded-xl px-4 py-3 bg-white dark:bg-neutral-800 text-neutral-800 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black"
-            onChange={(e) => setGamma(parseFloat(e.target.value))}
-          />
-          <input
-            type="number"
-            placeholder="남은 만기일 (일)"
-            className="w-full rounded-xl px-4 py-3 bg-white dark:bg-neutral-800 text-neutral-800 dark:text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-black"
-            onChange={(e) => setDaysToExpiry(parseInt(e.target.value))}
-          />
+          {[{ label: '진입가', setter: setEntryPrice },
+            { label: '목표가', setter: setTargetPrice },
+            { label: '행사가', setter: setStrikePrice },
+            { label: '현재가', setter: setCurrentPrice },
+            { label: '델타', setter: setDelta },
+            { label: '감마', setter: setGamma },
+            { label: '남은 만기일 (일)', setter: (v) => setDaysToExpiry(parseInt(v)) }
+          ].map((item, idx) => (
+            <input
+              key={idx}
+              type="number"
+              placeholder={item.label}
+              onChange={(e) => item.setter(parseFloat(e.target.value))}
+              className="w-full px-4 py-3 border border-neutral-300 dark:border-neutral-700 rounded-lg bg-neutral-50 dark:bg-neutral-800 text-neutral-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-black"
+            />
+          ))}
         </div>
 
-        <div className="text-center">
-          <button
-            onClick={calculateReturn}
-            className="mt-4 w-full bg-black text-white py-3 rounded-full text-lg font-medium hover:bg-neutral-800 transition-all"
-          >
-            수익률 계산하기
-          </button>
-        </div>
+        <button
+          onClick={calculateReturn}
+          className="w-full mt-4 bg-black text-white py-3 rounded-lg font-medium transition-all duration-200 transform hover:bg-neutral-800 hover:scale-105 active:scale-95"
+        >
+          수익률 계산하기
+        </button>
 
         {result && (
-          <div className="rounded-xl bg-neutral-100 dark:bg-neutral-800 p-5 space-y-2 text-neutral-800 dark:text-neutral-100 shadow-sm">
-            <div>📈 <strong>예상 수익률:</strong> {result.roi}%</div>
-            <div>📏 <strong>옵션 거리:</strong> {result.distance}</div>
-            <div>🎯 <strong>성공 확률 추정:</strong> {result.successRate}%</div>
+          <div className="bg-neutral-100 dark:bg-neutral-800 rounded-lg p-4 space-y-2 text-neutral-800 dark:text-white mt-4 shadow-sm">
+            <div><strong>수익률:</strong> {result.roi}%</div>
+            <div><strong>거리:</strong> {result.distance}</div>
+            <div><strong>성공 확률:</strong> {result.successRate}%</div>
           </div>
         )}
 
-        <div className="pt-2 text-center text-sm text-neutral-500 dark:text-neutral-400">
-          {isTradable() ? "✅ D-3 이상: 거래 가능" : "🚫 D-3 이하: 거래 주의"}
-        </div>
+        {chartData.length > 0 && (
+          <div className="bg-white dark:bg-neutral-800 p-4 rounded-lg shadow mt-4">
+            <ResponsiveContainer width="100%" height={200}>
+              <LineChart data={chartData}>
+                <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.1} />
+                <XAxis dataKey="price" stroke="#888" />
+                <YAxis stroke="#888" />
+                <Tooltip />
+                <Line type="monotone" dataKey="roi" stroke="#6366f1" strokeWidth={2} dot={false} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        )}
+
+        <p className="text-center text-sm text-neutral-500 dark:text-neutral-400 pt-4">
+          {isTradable() ? "D-3 이상: 거래 가능" : "D-3 이하: 거래 주의"}
+        </p>
       </div>
     </div>
   );
