@@ -2,6 +2,12 @@
 
 import { useState } from "react";
 
+type Result = {
+  roi: string;
+  distance: string;
+  successRate: number;
+};
+
 export default function OptionCalculator() {
   const [entryPrice, setEntryPrice] = useState(0);
   const [targetPrice, setTargetPrice] = useState(0);
@@ -10,7 +16,7 @@ export default function OptionCalculator() {
   const [delta, setDelta] = useState(0);
   const [gamma, setGamma] = useState(0);
   const [daysToExpiry, setDaysToExpiry] = useState(0);
-  const [result, setResult] = useState(null);
+  const [result, setResult] = useState<Result | null>(null);
 
   const calculateReturn = () => {
     if (entryPrice === 0) return;
