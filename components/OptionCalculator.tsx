@@ -46,8 +46,8 @@ export default function OptionCalculator() {
   return (
     <div className="min-h-screen bg-neutral-50 dark:bg-neutral-900 py-10 px-4 transition-colors">
       <div className="max-w-xl mx-auto">
-        <Card className="rounded-2xl shadow-lg bg-white dark:bg-neutral-800 transition-colors">
-          <CardContent className="space-y-6 p-6">
+        <div className="rounded-2xl shadow-lg bg-white dark:bg-neutral-800 transition-colors">
+          <div className="space-y-6 p-6">
             <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-100 text-center">
               🎛️ 옵션 감성 계산기
             </h2>
