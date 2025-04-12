@@ -1,4 +1,4 @@
-import OptionCalculator from "@/components/OptionCalculator";
+import OptionCalculator from "../components/OptionCalculator";
 
 export default function Home() {
   return (
